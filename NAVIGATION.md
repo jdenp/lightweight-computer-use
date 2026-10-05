@@ -26,11 +26,14 @@ Machine-specific notes for driving this desktop: window locations, coordinates, 
    click OK.
 6. Right-click the PLC node again and click "Write and Start Project" (F5). It is
    greyed out while the PLC is offline.
-7. GOTCHA: the PLC can answer with a "SECURE DEVICE CHANGE PASSWORD" dialog (old /
-   new password for admin). The password lives in the user's Password Manager and
-   is not readable here. Cancel the dialog and ask the user instead of guessing.
-8. A write progress dialog appears; wait for it to finish, then verify the PLC node
-   icon shows running and the messages window has no new red errors.
+7. The menu row directly above "Write and Start Project" is "Change Password...":
+   a click ~20px too high opens a "SECURE DEVICE CHANGE PASSWORD" dialog (old / new
+   password for admin). That password lives in the user's Password Manager and is
+   not readable here. Writing itself does not prompt for a password. Measure the
+   target row's y from the captured menu image pixels before clicking.
+8. The write runs without a progress dialog (finishes in a few seconds). Verify
+   afterwards: the PLC node icon shows the play symbol (running) and the messages
+   window has no new red errors.
 
 Coordinates: always derive from client_rect of the current window plus image
 offsets; window position changes between sessions.
