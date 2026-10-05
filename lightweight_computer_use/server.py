@@ -19,7 +19,12 @@ INSTRUCTIONS = (
     "All coordinates are native virtual-desktop pixels. Virtual desktop is 3840x1080 at "
     "(-1920,0): primary display is (0,0)-(1920,1080), the secondary is on the left at "
     "(-1920,0)-(0,1080), so negative x is the left display. Displays are indexed left to "
-    "right, 0 = leftmost (here 0 = secondary, 1 = primary)."
+    "right, 0 = leftmost (here 0 = secondary, 1 = primary). "
+    "Input is not acknowledged by the OS: a keypress can be dropped, so after a click or "
+    "hotkey that should change the screen, take a screenshot and verify before continuing. "
+    "Keystrokes go to the focused window: check the foreground before type/hotkey, and avoid "
+    "esc (it can abort the focused app). Windows with empty titles (taskbar) cannot be found "
+    "by title: use hwnd. The Win key toggles the Start menu."
 )
 
 mcp = FastMCP("lightweight-computer-use", instructions=INSTRUCTIONS)
