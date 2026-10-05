@@ -34,7 +34,9 @@
 - Screen/region capture of the left display is pure black on this machine
   (screen DC quirk). The window path uses PrintWindow (PW_RENDERFULLCONTENT +
   GetDIBits 32-bit BGRA), which reads the window's own rendering: occluded
-  windows included, left display included.
+  windows included, left display included. It does NOT include separate popup
+  windows (context menus, tooltips): those are their own top-level windows,
+  findable by EnumWindows if a menu's position matters.
 - Pillow ImageGrab.grab takes a virtual-screen bbox; negative left is fine
   (Pillow >= 9.2).
 - Server instructions repeat the coordinate-space note (fastmcp instructions
