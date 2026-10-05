@@ -61,11 +61,12 @@ double-clicks inside one call stay tight.
 
 ## Navigation learnings
 
-`NAVIGATION.md` in the repo root holds machine-specific learnings: window
-locations, coordinates, quirks, dead ends. The server instructions tell the
-model to read it before navigating; new notes go in only on request. It
-ships with a
-one-line seed and is gitignored, so local additions stay local.
+`NAVIGATION.md` in the repo root is the index: it lists the available
+workflows and says (in caps) that the model must read the workflow file before
+running it. Each workflow lives in its own subdirectory under `navigation/`
+with the step-by-step specifics (currently: plcnext-write-start). New notes
+go in only on request. Both ship as a template and are gitignored, so local
+additions stay local.
 
 ## MCP
 

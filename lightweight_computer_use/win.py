@@ -79,6 +79,28 @@ def find_window(window):
     return found[0]
 
 
+def list_windows():
+    """All visible top-level windows: [(hwnd, class, (left, top, w, h), title), ...] sorted top to bottom. Includes popups (menus, dialogs)."""
+    out = []
+
+    def cb(hwnd, lparam):
+        if not user32.IsWindowVisible(hwnd):
+            return True
+        r = wintypes.RECT()
+        user32.GetWindowRect(hwnd, ctypes.byref(r))
+        w = r.right - r.left
+        h = r.bottom - r.top
+        if w > 50 and h > 20:
+            cls = ctypes.create_unicode_buffer(64)
+            user32.GetClassNameW(hwnd, cls, 64)
+            out.append((hwnd, cls.value[:40], (r.left, r.top, w, h), window_title(hwnd)[:80]))
+        return True
+
+    user32.EnumWindows(ENUMWINPROC(cb), 0)
+    out.sort(key=lambda t: (t[2][1], t[2][0]))
+    return out
+
+
 def client_rect(hwnd):
     """Client area as (x, y, w, h) in virtual-desktop px."""
     r = wintypes.RECT()
