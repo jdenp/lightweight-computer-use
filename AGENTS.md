@@ -31,6 +31,10 @@
   tool calls don't land mid-UI-update; pairs inside one call are unsleeped.
 - Machine-level keypresses reach whatever window has focus: an esc sent to
   close the Start menu aborts a focused pi TUI (app.interrupt).
+- Screen/region capture of the left display is pure black on this machine
+  (screen DC quirk). The window path uses PrintWindow (PW_RENDERFULLCONTENT +
+  GetDIBits 32-bit BGRA), which reads the window's own rendering: occluded
+  windows included, left display included.
 - Pillow ImageGrab.grab takes a virtual-screen bbox; negative left is fine
   (Pillow >= 9.2).
 - Server instructions repeat the coordinate-space note (fastmcp instructions

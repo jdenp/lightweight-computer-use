@@ -1,7 +1,9 @@
 """lightweight-computer-use: screenshot-only computer-use MCP server for Windows."""
 import base64
+import ctypes
 import io
 import os
+from ctypes import wintypes
 
 from fastmcp import FastMCP
 from mcp.types import ImageContent, TextContent
@@ -24,7 +26,9 @@ INSTRUCTIONS = (
     "hotkey that should change the screen, take a screenshot and verify before continuing. "
     "Keystrokes go to the focused window: check the foreground before type/hotkey, and avoid "
     "esc (it can abort the focused app). Windows with empty titles (taskbar) cannot be found "
-    "by title: use hwnd. The Win key toggles the Start menu."
+    "by title: use hwnd. The Win key toggles the Start menu. Screen and region captures of the "
+    "left display come back black on this machine: use the window parameter (PrintWindow) for "
+    "windows there."
 )
 
 mcp = FastMCP("lightweight-computer-use", instructions=INSTRUCTIONS)
@@ -59,14 +63,48 @@ def _encode(img, fmt):
         label = f"JPEG q{JPEG_QUALITY}"
     return base64.b64encode(buf.getvalue()).decode(), mime, label
 
+gdi32 = ctypes.WinDLL("gdi32", use_last_error=True)
+
+
+class _BmpInfoHeader(ctypes.Structure):
+    _fields_ = [
+        ("biSize", wintypes.DWORD), ("biWidth", ctypes.c_long), ("biHeight", ctypes.c_long),
+        ("biPlanes", wintypes.WORD), ("biBitCount", wintypes.WORD), ("biCompression", wintypes.DWORD),
+        ("biSizeImage", wintypes.DWORD), ("biXPelsPerMeter", ctypes.c_long),
+        ("biYPelsPerMeter", ctypes.c_long), ("biClrUsed", wintypes.DWORD),
+        ("biClrImportant", wintypes.DWORD),
+    ]
+
+
+def _print_window(hwnd, w, h):
+    """Client pixels via PrintWindow: works on occluded windows and on displays whose screen DC is black."""
+    src = win.user32.GetDC(hwnd)
+    mem = gdi32.CreateCompatibleDC(src)
+    bmp = gdi32.CreateCompatibleBitmap(src, w, h)
+    gdi32.SelectObject(mem, bmp)
+    win.user32.PrintWindow(hwnd, mem, 2)  # PW_RENDERFULLCONTENT
+    hdr = _BmpInfoHeader()
+    hdr.biSize = ctypes.sizeof(_BmpInfoHeader)
+    hdr.biWidth, hdr.biHeight = w, -h
+    hdr.biPlanes, hdr.biBitCount = 1, 32
+    buf = ctypes.create_string_buffer(w * h * 4)
+    rows = gdi32.GetDIBits(mem, bmp, 0, h, buf, ctypes.byref(hdr), 0)
+    gdi32.DeleteObject(bmp)
+    gdi32.DeleteDC(mem)
+    win.user32.ReleaseDC(hwnd, src)
+    if not rows:
+        raise ValueError(f"GetDIBits failed for hwnd {hwnd}")
+    return Image.frombuffer("RGBA", (w, h), buf, "raw", "BGRA", 0, 1).convert("RGB")
+
 
 @mcp.tool
 def screenshot(display=None, window=None, region=None, scale=None, fmt="jpeg"):
     """Capture the screen. display: zero-based index or list, default all.
-    window: title substring or hwnd; captures that window's client area.
-    region: [x, y, w, h] in virtual-desktop px. scale: 0.1-1.0, overrides config.
-    fmt: jpeg (default) or png. The response text states the display geometry,
-    original capture size, returned image size, and scale factor."""
+    window: title substring or hwnd; captures that window's client area via
+    PrintWindow (works on occluded windows and on displays whose screen DC is
+    black). region: [x, y, w, h] in virtual-desktop px. scale: 0.1-1.0, overrides
+    config. fmt: jpeg (default) or png. The response text states the display
+    geometry, original capture size, returned image size, and scale factor."""
     if window is not None and region is not None:
         raise ValueError("window and region are mutually exclusive")
     if scale is not None and not 0.1 <= scale <= 1.0:
@@ -79,7 +117,8 @@ def screenshot(display=None, window=None, region=None, scale=None, fmt="jpeg"):
     if window is not None:
         hwnd, title = win.find_window(window)
         x, y, w, h = win.client_rect(hwnd)
-        cap_desc = f'window "{title}" (hwnd {hwnd}) client ({x},{y}) {w}x{h}'
+        cap_desc = f'window "{title}" (hwnd {hwnd}) client ({x},{y}) {w}x{h}, PrintWindow'
+        img = _print_window(hwnd, w, h)
     elif region is not None:
         if len(region) != 4 or any(not isinstance(v, int) for v in region):
             raise ValueError("region must be [x, y, w, h] in virtual-desktop px")
@@ -103,7 +142,8 @@ def screenshot(display=None, window=None, region=None, scale=None, fmt="jpeg"):
         x, y, w, h = x1, y1, x2 - x1, y2 - y1
         cap_desc = f"displays {idxs} ({x},{y}) {w}x{h}"
 
-    img = ImageGrab.grab(bbox=(x, y, x + w, y + h))
+    if window is None:
+        img = ImageGrab.grab(bbox=(x, y, x + w, y + h))
     orig_w, orig_h = img.size
 
     # scale only when the capture exceeds MAX_WIDTH

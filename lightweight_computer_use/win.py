@@ -19,6 +19,8 @@ MONITORENUMPROC = ctypes.WINFUNCTYPE(
     wintypes.BOOL, wintypes.HDC, wintypes.HANDLE, ctypes.POINTER(wintypes.RECT), wintypes.LPARAM
 )
 
+ENUMWINPROC = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
+
 
 def list_monitors():
     """Monitors as {left, top, right, bottom, primary}, sorted left to right."""

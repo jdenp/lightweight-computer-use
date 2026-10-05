@@ -18,6 +18,12 @@ displays, virtual desktop 3840x1080 at (-1920,0); the secondary is on the left,
 so negative x is the left display. Displays are indexed left to right,
 0 = leftmost (here 0 = secondary, 1 = primary).
 
+Known limitation: screen and region captures of the secondary (left) display
+come back pure black on this machine even though content is visible there,
+so you only see the whole main screen. Windows on the left display can still
+be found by title or hwnd and driven, and their pixels are captured with the
+`window` parameter, which uses PrintWindow instead of the screen DC.
+
 ## Install
 
 ```
@@ -37,7 +43,8 @@ Deps: fastmcp + Pillow, nothing else.
 ## Tools
 
 - `screenshot` - `display` (zero-based index or list, default all), `window`
-  (title substring or hwnd; captures the client area), `region` [x,y,w,h]
+  (title substring or hwnd; client area via PrintWindow, works on occluded
+  windows and on displays whose screen DC is black), `region` [x,y,w,h]
   (virtual-desktop px), `scale`, `fmt` (jpeg/png)
 - `move` [x,y] - move cursor
 - `click` [x,y] - `button` left/right/middle, `clicks` 1/2
