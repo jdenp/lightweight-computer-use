@@ -134,6 +134,7 @@ def screenshot(display=None, window=None, region=None, scale=None, fmt="jpeg"):
 def move(loc):
     """Move the cursor to [x, y] in virtual-desktop px and report the actual position."""
     x, y = _loc(loc)
+    win.settle()
     win.set_cursor_pos(x, y)
     cx, cy = win.get_cursor_pos()
     return f"cursor moved to ({x},{y}); actual cursor position: ({cx},{cy})"

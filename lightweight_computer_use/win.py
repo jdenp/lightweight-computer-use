@@ -1,10 +1,19 @@
 """Win32 helpers: monitors, window rects, SendInput mouse and keyboard."""
 import ctypes
+import time
 from ctypes import wintypes
 
 user32 = ctypes.WinDLL("user32", use_last_error=True)
 
 ULONG_PTR = ctypes.c_uint64 if ctypes.sizeof(ctypes.c_void_p) == 8 else ctypes.c_uint32
+
+# fixed gap between consecutive input actions; pairs inside one call (double-click, key chord) stay tight
+STEP_DELAY_S = 0.2
+
+
+def settle():
+    time.sleep(STEP_DELAY_S)
+
 
 MONITORENUMPROC = ctypes.WINFUNCTYPE(
     wintypes.BOOL, wintypes.HDC, wintypes.HANDLE, ctypes.POINTER(wintypes.RECT), wintypes.LPARAM
@@ -180,6 +189,7 @@ def _key(vk, up=False, char=None):
 
 def click(x, y, button="left", clicks=1):
     """Move then press at (x, y); returns the final cursor position."""
+    settle()
     set_cursor_pos(x, y)
     down, up = BUTTONS[button]
     send_inputs([_mouse(down) for _ in range(clicks)] + [_mouse(up) for _ in range(clicks)])
@@ -190,6 +200,7 @@ def scroll(dx=0, dy=0):
     """Wheel units: 120 = one notch, dy>0 up, dx>0 right."""
     if dx == 0 and dy == 0:
         raise ValueError("dx and dy are both zero")
+    settle()
     inputs = []
     if dy:
         inputs.append(_mouse(MOUSEEVENTF_WHEEL, dy))
@@ -200,6 +211,7 @@ def scroll(dx=0, dy=0):
 
 def type_text(text):
     """Unicode input: any script, no layout dependency."""
+    settle()
     send_inputs([c for ch in text for c in (_key(0, char=ch), _key(0, up=True, char=ch))])
 
 
@@ -246,4 +258,5 @@ def hotkey(names):
         if vk is None:
             raise ValueError(f"unknown key: {n!r}")
         vks.append(vk)
+    settle()
     send_inputs([_key(v) for v in vks] + [_key(v, up=True) for v in reversed(vks)])

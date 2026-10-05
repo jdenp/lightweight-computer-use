@@ -27,6 +27,10 @@
 - No absolute SendInput mouse coordinates: move with SetCursorPos, then plain
   down/up events. Absolute coords would need 0-65535 normalization across the
   virtual screen.
+- Input actions start with a 200 ms settle (win.STEP_DELAY_S) so consecutive
+  tool calls don't land mid-UI-update; pairs inside one call are unsleeped.
+- Machine-level keypresses reach whatever window has focus: an esc sent to
+  close the Start menu aborts a focused pi TUI (app.interrupt).
 - Pillow ImageGrab.grab takes a virtual-screen bbox; negative left is fine
   (Pillow >= 9.2).
 - Server instructions repeat the coordinate-space note (fastmcp instructions

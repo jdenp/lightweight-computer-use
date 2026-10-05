@@ -45,6 +45,9 @@ Every screenshot response states the display geometry, original capture size,
 returned image size, and scale factor, so the image's coordinate math is in
 the response. Move/click report the actual cursor position.
 
+Input actions are spaced by a fixed 200 ms settle delay; key chords and
+double-clicks inside one call stay tight.
+
 ## MCP
 
 `C:\Users\short\.pi\agent\mcp.json`:
