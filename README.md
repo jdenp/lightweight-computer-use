@@ -59,6 +59,13 @@ the response. Move/click report the actual cursor position.
 Input actions are spaced by a fixed 200 ms settle delay; key chords and
 double-clicks inside one call stay tight.
 
+## Navigation learnings
+
+`NAVIGATION.md` in the repo root holds machine-specific learnings: window
+locations, coordinates, quirks, dead ends. The server instructions tell the
+model to read it before navigating and add new ones. It ships with a
+one-line seed and is gitignored, so local additions stay local.
+
 ## MCP
 
 `C:\Users\short\.pi\agent\mcp.json`:
