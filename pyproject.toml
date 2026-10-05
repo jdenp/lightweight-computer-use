@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lightweight-computer-use"
+version = "0.1.0"
+description = "Screenshot-only computer-use MCP server for Windows (vision, no UIA)"
+requires-python = ">=3.10"
+dependencies = ["fastmcp>=2.0", "pillow>=10"]
+
+[tool.setuptools]
+packages = ["lightweight_computer_use"]
