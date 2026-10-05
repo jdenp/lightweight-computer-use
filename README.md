@@ -57,10 +57,14 @@ double-clicks inside one call stay tight.
   "mcpServers": {
     "lightweight-computer-use": {
       "command": "C:\\Python313\\python.exe",
-      "args": ["-m", "lightweight_computer_use", "serve"]
+      "args": ["-m", "lightweight_computer_use", "serve"],
+      "exposure": "direct"
     }
   }
 }
 ```
+
+`exposure: direct` declares the six tools to the model as first-class tools
+(one call per step); without it pi routes MCP calls through codemode scripts.
 
 Run it standalone: `C:\Python313\python.exe -m lightweight_computer_use serve`
