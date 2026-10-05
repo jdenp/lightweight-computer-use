@@ -1,11 +1,15 @@
 # lightweight-computer-use
 
-Screenshot-only computer-use MCP server for Windows. Vision by design: no UIA,
-no accessibility tree, no DOM, no element labels, no OCR.
+Annoyed at accessibility trees and giant JSON UI dumps? This is for you.
+Simple and efficient vision-based computer use: an MCP server that navigates
+with scaled screenshots and zooms.
+
+Screenshot-only, Windows, vision by design: no UIA, no accessibility tree, no
+DOM, no element labels, no OCR.
 
 Replaces computer-use-mcp (hardcoded downscale, no config, huge images) and
-Windows-MCP (UIA tree is empty for web-rendered apps like PLCnext Engineer,
-element labels invisible in text output, multi-monitor coordinates ambiguous).
+Windows-MCP (UIA tree is empty for web-rendered apps, element labels invisible
+in text output, multi-monitor coordinates ambiguous).
 
 ## Coordinate space
 
