@@ -29,8 +29,8 @@ INSTRUCTIONS = (
     "by title: use hwnd. The Win key toggles the Start menu. Screen and region captures of the "
     "left display come back black on this machine: use the window parameter (PrintWindow) for "
     "windows there. Before navigating, read NAVIGATION.md in the repo root "
-    "(C:\\Repos\\lightweight-computer-use\\NAVIGATION.md) for machine-specific learnings, and "
-    "note new ones there."
+    "(C:\\Repos\\lightweight-computer-use\\NAVIGATION.md) for machine-specific learnings. "
+    "Add new notes there only when the user asks."
 )
 
 mcp = FastMCP("lightweight-computer-use", instructions=INSTRUCTIONS)

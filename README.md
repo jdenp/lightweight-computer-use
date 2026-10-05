@@ -63,7 +63,8 @@ double-clicks inside one call stay tight.
 
 `NAVIGATION.md` in the repo root holds machine-specific learnings: window
 locations, coordinates, quirks, dead ends. The server instructions tell the
-model to read it before navigating and add new ones. It ships with a
+model to read it before navigating; new notes go in only on request. It
+ships with a
 one-line seed and is gitignored, so local additions stay local.
 
 ## MCP
