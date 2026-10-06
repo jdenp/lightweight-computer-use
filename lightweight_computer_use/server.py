@@ -16,6 +16,10 @@ MAX_WIDTH = int(os.environ.get("LWCU_MAX_WIDTH", "1600"))
 JPEG_QUALITY = int(os.environ.get("LWCU_JPEG_QUALITY", "80"))
 
 INSTRUCTIONS = (
+    "First step of any session: check alive processes (tasklist) before screenshotting - "
+    "a screenshot cannot show every display. Never capture more than one display at a "
+    "time: pass a single display index or a window; a multi-display capture is too large "
+    "to be useful. "
     "Screenshot-only computer-use server for this Windows machine. Vision by design: "
     "no UIA, no accessibility tree, no DOM, no element labels, no OCR. "
     "All coordinates are native virtual-desktop pixels. Virtual desktop is 3840x1080 at "
